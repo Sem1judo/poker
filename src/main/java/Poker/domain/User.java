@@ -21,14 +21,11 @@ private LocalDateTime updated;
         this.balance = 0;
     }
 
-    public User(int id, String login, String password, String email, double balance, LocalDateTime created, LocalDateTime updated) {
-        this.id = id;
+    public User(String login, String password, String email) {
         this.login = login;
         this.password = password;
         this.email = email;
-        this.balance = balance;
-        this.created = created;
-        this.updated = updated;
+
     }
 
     public int getId() {
