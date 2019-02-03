@@ -4,7 +4,6 @@ import Poker.domain.Player;
 import Poker.jdbc.util.DataBase;
 
 import java.sql.*;
-
 public class PlayerCRUD {
 
 
