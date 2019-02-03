@@ -2,6 +2,7 @@ package Poker.jdbc;
 
 import Poker.domain.User;
 import Poker.jdbc.util.DataBase;
+
 import java.sql.*;
 
 public class UserCRUD {
@@ -41,17 +42,17 @@ public class UserCRUD {
         User user = null;
         try {
             Connection con = DataBase.getConnect();
-            String readQuery = "{call getUserbyId(?,?,?,?,?)}";
+            String readQuery = "{call getUserbyId(?)}";
             CallableStatement cs = con.prepareCall(readQuery);
             cs.setInt(1, id);
 
             ResultSet resultSet = cs.getResultSet();
-            while (resultSet.next()) {
-                user.setLogin(resultSet.getString("login"));
-                user.setPassword(resultSet.getString("password"));
-                user.setEmail(resultSet.getString("email"));
-                user.setBalance(resultSet.getDouble("balance"));
-            }
+            resultSet.next();
+            user.setLogin(resultSet.getString("login"));
+            user.setPassword(resultSet.getString("password"));
+            user.setEmail(resultSet.getString("email"));
+            user.setBalance(resultSet.getDouble("balance"));
+
             resultSet.close();
             cs.close();
             con.close();
@@ -84,7 +85,7 @@ public class UserCRUD {
         try {
 
             Connection con = DataBase.getConnect();
-            String updateRequest = "{{call updatedUser(?,?,?,?}}";
+            String updateRequest = "{call updatedUser(?,?,?,?}";
             CallableStatement cs = con.prepareCall(updateRequest);
             cs.setString(1, user.getLogin());
             cs.setString(2, user.getEmail());
