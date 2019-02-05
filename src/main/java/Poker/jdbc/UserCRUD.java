@@ -47,7 +47,7 @@ public class UserCRUD {
         try {
             Connection con = DataBase.getConnect();
             String readQuery = "select *from user where id = ?";
-            PreparedStatement ps  = con.prepareStatement(readQuery);
+            PreparedStatement ps = con.prepareStatement(readQuery);
             ps.setInt(1, id);
 
             ResultSet resultSet = ps.executeQuery();
@@ -98,8 +98,8 @@ public class UserCRUD {
             cs.setString(1, user.getLogin());
             cs.setString(2, user.getEmail());
             cs.setString(3, user.getPassword());
-            cs.setDouble(4,user.getBalance());
-            cs.setInt(5,user.getId());
+            cs.setDouble(4, user.getBalance());
+            cs.setInt(5, user.getId());
 
             cs.execute();
 
@@ -112,18 +112,33 @@ public class UserCRUD {
         return user;
     }
 
-    public User loginUser(String log){
+    public User loginUser(String log, String pass) {
         User user = new User();
         try {
+
             Connection con = DataBase.getConnect();
-            String queryLogin = "{call authorizationUser(?,?)}";
-            CallableStatement cs = con.prepareCall(queryLogin);
-            cs.setString(1,log);
-            cs.setString(2,user.getPassword());
+            String readQuery = "select *from user where login = ? and password = ? ";
+            PreparedStatement ps = con.prepareStatement(readQuery);
+            ps.setString(1, log);
+            ps.setString(2, pass);
+
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+
+            user.setLogin(log);
+            user.setPassword(pass);
+            user.setId(resultSet.getInt("id"));
+            user.setEmail(resultSet.getString("email"));
+            user.setBalance(resultSet.getDouble("balance"));
+            user.setCreated(resultSet.getDate("created").toLocalDate());
+            user.setUpdated(resultSet.getDate("updated").toLocalDate());
+
+
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-return user;
+        return user;
     }
 }

@@ -41,4 +41,12 @@ public class UserCRUDTest {
         u = userCRUD.readUser(1);
         System.out.println(u);
     }
+
+    @Test
+    public void loginUser() {
+        User u = userCRUD.loginUser("Stasik","mail");
+        System.out.println(u.toString());
+
+
+    }
 }
