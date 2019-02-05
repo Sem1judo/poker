@@ -1,6 +1,6 @@
 package Poker.domain;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class User {
 
@@ -9,8 +9,8 @@ private String login;
 private String password;
 private String email;
 private double balance;
-private LocalDateTime created;
-private LocalDateTime updated;
+private LocalDate created;
+private LocalDate updated;
 
 
     public User() {
@@ -68,19 +68,19 @@ private LocalDateTime updated;
         this.balance = balance;
     }
 
-    public LocalDateTime getCreated() {
+    public LocalDate getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDateTime created) {
+    public void setCreated(LocalDate created) {
         this.created = created;
     }
 
-    public LocalDateTime getUpdated() {
+    public LocalDate getUpdated() {
         return updated;
     }
 
-    public void setUpdated(LocalDateTime updated) {
+    public void setUpdated(LocalDate updated) {
         this.updated = updated;
     }
 

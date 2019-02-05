@@ -3,7 +3,9 @@ package Poker.jdbc;
 import Poker.domain.User;
 import Poker.jdbc.util.DataBase;
 
+import javax.jws.soap.SOAPBinding;
 import java.sql.*;
+import java.time.LocalDate;
 
 public class UserCRUD {
 
@@ -39,22 +41,28 @@ public class UserCRUD {
     }
 
     public User readUser(int id) {
-        User user = null;
+        User user = new User();
+
+
         try {
             Connection con = DataBase.getConnect();
-            String readQuery = "{call getUserbyId(?)}";
-            CallableStatement cs = con.prepareCall(readQuery);
-            cs.setInt(1, id);
+            String readQuery = "select *from user where id = ?";
+            PreparedStatement ps  = con.prepareStatement(readQuery);
+            ps.setInt(1, id);
 
-            ResultSet resultSet = cs.getResultSet();
+            ResultSet resultSet = ps.executeQuery();
             resultSet.next();
+
+            user.setId(id);
             user.setLogin(resultSet.getString("login"));
             user.setPassword(resultSet.getString("password"));
             user.setEmail(resultSet.getString("email"));
             user.setBalance(resultSet.getDouble("balance"));
+            user.setCreated(resultSet.getDate("created").toLocalDate());
+            user.setUpdated(resultSet.getDate("updated").toLocalDate());
 
             resultSet.close();
-            cs.close();
+            ps.close();
             con.close();
 
 
@@ -80,17 +88,19 @@ public class UserCRUD {
 
     }
 
-    public User updateUser(int id) {
-        User user = null;
+    public User updateUser(User user) {
+
         try {
 
             Connection con = DataBase.getConnect();
-            String updateRequest = "{call updatedUser(?,?,?,?}";
+            String updateRequest = "{call updatedUser(?,?,?,?,?)}";
             CallableStatement cs = con.prepareCall(updateRequest);
             cs.setString(1, user.getLogin());
             cs.setString(2, user.getEmail());
             cs.setString(3, user.getPassword());
-            cs.setInt(4, id);
+            cs.setDouble(4,user.getBalance());
+            cs.setInt(5,user.getId());
+
             cs.execute();
 
             cs.close();
@@ -100,5 +110,20 @@ public class UserCRUD {
         }
 
         return user;
+    }
+
+    public User loginUser(String log){
+        User user = new User();
+        try {
+            Connection con = DataBase.getConnect();
+            String queryLogin = "{call authorizationUser(?,?)}";
+            CallableStatement cs = con.prepareCall(queryLogin);
+            cs.setString(1,log);
+            cs.setString(2,user.getPassword());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+return user;
     }
 }

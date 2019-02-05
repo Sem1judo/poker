@@ -22,8 +22,8 @@ public class UserCRUDTest {
     @Test
     public void readUser() {
 
-        userCRUD.readUser(1);
-
+        User u = userCRUD.readUser(1);
+        System.out.println(u.toString());
     }
 
     @Test
@@ -33,9 +33,12 @@ public class UserCRUDTest {
 
     @Test
     public void updateUser() {
-        user.setLogin("New");
-        user.setPassword("difficult123");
-        user.setEmail("george@rambler.ru");
-        userCRUD.updateUser(2);
+        User u = userCRUD.readUser(1);
+        System.out.println(u);
+        u.setBalance(999999);
+        userCRUD.updateUser(u);
+
+        u = userCRUD.readUser(1);
+        System.out.println(u);
     }
 }
