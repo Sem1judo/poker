@@ -45,7 +45,9 @@ public class UserCRUDTest {
     @Test
     public void loginUser() {
         User u = userCRUD.loginUser("Stasik","mail");
-        System.out.println(u.toString());
+         if (u != null){
+             System.out.println("Welcome dear king");
+         }else System.out.println("Go away little bastard");
 
 
     }

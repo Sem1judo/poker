@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 public class UserCRUD {
 
-
     public void createUser(User user) {
         try {
             Connection con = DataBase.getConnect();
@@ -113,7 +112,7 @@ public class UserCRUD {
     }
 
     public User loginUser(String log, String pass) {
-        User user = new User();
+        User user = null;
         try {
 
             Connection con = DataBase.getConnect();
@@ -125,6 +124,7 @@ public class UserCRUD {
             ResultSet resultSet = ps.executeQuery();
             resultSet.next();
 
+            user = new User();
             user.setLogin(log);
             user.setPassword(pass);
             user.setId(resultSet.getInt("id"));
@@ -133,10 +133,11 @@ public class UserCRUD {
             user.setCreated(resultSet.getDate("created").toLocalDate());
             user.setUpdated(resultSet.getDate("updated").toLocalDate());
 
-
+            ps.close();
             con.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Wrong login or password");
+            return null;
         }
 
         return user;

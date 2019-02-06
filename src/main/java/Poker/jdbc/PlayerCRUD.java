@@ -6,8 +6,6 @@ import Poker.jdbc.util.DataBase;
 import java.sql.*;
 public class PlayerCRUD {
 
-
-
     public int createPlayer(Player player) {
         int newid = -1;
         try {
@@ -54,8 +52,6 @@ public class PlayerCRUD {
         }
         return player;
     }
-
-
 
     public void deletePlayer(int id) {
         try {
