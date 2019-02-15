@@ -7,31 +7,34 @@ import java.sql.*;
 public class PlayerCRUD {
 
     public int createPlayer(Player player) {
-        int newid = -1;
-        try {
-            Connection con = DataBase.getConnect();
-            String addQuery = "{call addPlayer(?)}";
-            CallableStatement cs = con.prepareCall(addQuery);
-            cs.setString(1, player.getNickName());
-            cs.execute();
-            cs.close();
 
-            String queryId = "select last_insert_id()";
-            Statement st = con.createStatement();
-            ResultSet resultSet = st.executeQuery(queryId);
-            resultSet.next();
-             newid = resultSet.getInt(1);
-            System.out.println(newid);
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Connection con = DataBase.getConnect();
+//            String addQuery = "{call addPlayer(?)}";
+//            CallableStatement cs = con.prepareCall(addQuery);
+//            cs.setString(1, player.getNickName());
+//            cs.execute();
+//            cs.close();
+//
+//            String queryId = "select last_insert_id()";
+//            Statement st = con.createStatement();
+//            ResultSet resultSet = st.executeQuery(queryId);
+//            resultSet.next();
+//            int id = resultSet.getInt(1);
+//            if (id == 0)
+//                throw new Exception("Problem with creating player");
+//            else player.setId(id);
+//            con.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
 
         return newid;
         //return SET @last_id_in_table1 = LAST_INSERT_ID()
     }
 
-    public Player getById(int id) {
+    public Player readPlayer(int id) {
         Player player = new Player();
         try {
             Connection con = DataBase.getConnect();

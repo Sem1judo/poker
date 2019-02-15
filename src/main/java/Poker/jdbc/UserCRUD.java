@@ -36,7 +36,6 @@ public class UserCRUD {
         }
 
 
-        //return SET @last_id_in_table1 = LAST_INSERT_ID()
     }
 
     public User readUser(int id) {
