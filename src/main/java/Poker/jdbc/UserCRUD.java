@@ -3,9 +3,7 @@ package Poker.jdbc;
 import Poker.domain.User;
 import Poker.jdbc.util.DataBase;
 
-import javax.jws.soap.SOAPBinding;
 import java.sql.*;
-import java.time.LocalDate;
 
 public class UserCRUD {
 
@@ -44,23 +42,29 @@ public class UserCRUD {
 
         try {
             Connection con = DataBase.getConnect();
-            String readQuery = "select *from user where id = ?";
-            PreparedStatement ps = con.prepareStatement(readQuery);
-            ps.setInt(1, id);
+            String readQuery = "{call getUserbyId (?,?,?,?,?,?,?)}";
+            CallableStatement cs = con.prepareCall(readQuery);
 
-            ResultSet resultSet = ps.executeQuery();
-            resultSet.next();
+            cs.setInt(1, id);
+            cs.registerOutParameter(2, Types.VARCHAR);
+            cs.registerOutParameter(3, Types.VARCHAR);
+            cs.registerOutParameter(4, Types.VARCHAR);
+            cs.registerOutParameter(5, Types.DOUBLE);
+            cs.registerOutParameter(6, Types.TIMESTAMP);
+            cs.registerOutParameter(7, Types.TIMESTAMP);
+
+            cs.execute();
+
 
             user.setId(id);
-            user.setLogin(resultSet.getString("login"));
-            user.setPassword(resultSet.getString("password"));
-            user.setEmail(resultSet.getString("email"));
-            user.setBalance(resultSet.getDouble("balance"));
-            user.setCreated(resultSet.getDate("created").toLocalDate());
-            user.setUpdated(resultSet.getDate("updated").toLocalDate());
+            user.setLogin(cs.getString(2));
+            user.setPassword(cs.getString(3));
+            user.setEmail(cs.getString(4));
+            user.setBalance(cs.getDouble(5));
+            user.setCreated(cs.getTimestamp(6).toLocalDateTime());
+            user.setUpdated(cs.getTimestamp(7).toLocalDateTime());
 
-            resultSet.close();
-            ps.close();
+            cs.close();
             con.close();
 
 
@@ -129,8 +133,8 @@ public class UserCRUD {
             user.setId(resultSet.getInt("id"));
             user.setEmail(resultSet.getString("email"));
             user.setBalance(resultSet.getDouble("balance"));
-            user.setCreated(resultSet.getDate("created").toLocalDate());
-            user.setUpdated(resultSet.getDate("updated").toLocalDate());
+            user.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
+            user.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
 
             ps.close();
             con.close();

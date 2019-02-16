@@ -15,7 +15,14 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
     public abstract List<K> parseRS(ResultSet resultSet);
 
     public abstract String deleteQuery();
+
     public abstract String updateQuery();
+
+    public abstract String getSelectByQuery();
+
+    public abstract void setCSParametrs(CallableStatement cs);
+
+    public abstract void getUserFromCS(int id, CallableStatement cs, K someObject);
 
 
     @Override
@@ -52,15 +59,17 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
         K someObject = null;
         try {
             Connection con = DataBase.getConnect();
-            String queryId = getSelectQuery() + " where id";
-            PreparedStatement ps = con.prepareStatement(queryId);
-            ps.setInt(1, id);
+            String queryId = getSelectByQuery();
+            CallableStatement cs = con.prepareCall(queryId);
+            cs.setInt(1, id);
 
-            Statement st = con.createStatement();
-            ResultSet resultSet = st.executeQuery(queryId);
-            List<K> list = parseRS(resultSet);
-            throw new Exception("Player not found");
-            someObject = list.get(0);
+            setCSParametrs(cs);
+
+            cs.execute();
+
+            getUserFromCS(id, cs, someObject);
+
+            cs.close();
             con.close();
         } catch (
                 SQLException e) {
@@ -73,21 +82,22 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
         return someObject;
     }
 
-        @Override
-        public void delete (int id){
-            try {
-                Connection con = DataBase.getConnect();
-                String deleteRequest = deleteQuery();
-                CallableStatement cs = con.prepareCall(deleteRequest);
-                cs.setInt(1, id);
-                cs.execute();
-                cs.close();
-                con.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
+    @Override
+    public void delete(int id) {
+        try {
+            Connection con = DataBase.getConnect();
+            String deleteRequest = deleteQuery();
+            CallableStatement cs = con.prepareCall(deleteRequest);
+            cs.setInt(1, id);
+            cs.execute();
+            cs.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+    }
 
     @Override
     public void update(K obj) {

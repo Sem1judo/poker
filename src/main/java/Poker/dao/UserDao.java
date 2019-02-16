@@ -1,7 +1,6 @@
 package Poker.dao;
 
 import Poker.domain.User;
-import Poker.jdbc.util.DataBase;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,13 +8,47 @@ import java.util.List;
 
 public class UserDao  extends AbstractDao<User> {
     @Override
+    public void getUserFromCS(int id, CallableStatement cs, User someObject) {
+        try {
+            someObject.setId(id);
+            someObject.setLogin(cs.getString(2));
+            someObject.setPassword(cs.getString(3));
+            someObject.setEmail(cs.getString(4));
+            someObject.setBalance(cs.getDouble(5));
+            someObject.setCreated(cs.getTimestamp(6).toLocalDateTime());
+            someObject.setUpdated(cs.getTimestamp(7).toLocalDateTime());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public String updateQuery() {
         return "{call updatedUser(?,?,?,?,?)}";
     }
 
     @Override
+    public String getSelectByQuery() {
+        return "{call getUserbyId (?,?,?,?,?,?,?)}";
+    }
+
+    @Override
+    public void setCSParametrs(CallableStatement cs) {
+        try {
+            cs.registerOutParameter(2, Types.VARCHAR);
+            cs.registerOutParameter(3, Types.VARCHAR);
+            cs.registerOutParameter(4, Types.VARCHAR);
+            cs.registerOutParameter(5, Types.DOUBLE);
+            cs.registerOutParameter(6, Types.TIMESTAMP);
+            cs.registerOutParameter(7, Types.TIMESTAMP);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public String getSelectQuery() {
-        return "select *from player";
+        return "select *from user";
     }
 
     @Override
@@ -35,8 +68,8 @@ public class UserDao  extends AbstractDao<User> {
                 user.setLogin(resultSet.getString("login"));
                 user.setEmail(resultSet.getString("email"));
                 user.setBalance(resultSet.getDouble("balance"));
-                user.setCreated(resultSet.getDate("created").toLocalDate());
-                user.setUpdated(resultSet.getDate("updated").toLocalDate());
+                user.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
+                user.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
                 users.add(user);
             }
         } catch (SQLException e) {
