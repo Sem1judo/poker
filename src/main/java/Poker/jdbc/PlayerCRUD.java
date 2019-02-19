@@ -73,8 +73,8 @@
 //    public void updatePlayer(Player player) {
 //        try {
 //            Connection con = DataBase.getConnect();
-//            String updateQuery = "{call updatePlayer(?,?)}";
-//            CallableStatement cs = con.prepareCall(updateQuery);
+//            String getUpdateQuery = "{call updatePlayer(?,?)}";
+//            CallableStatement cs = con.prepareCall(getUpdateQuery);
 //            cs.setInt(1, player.getId());
 //            cs.setString(2, player.getNickName());
 //            cs.execute();

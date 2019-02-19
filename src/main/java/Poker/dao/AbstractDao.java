@@ -10,19 +10,23 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
 
     public abstract String getSelectQuery();
 
-    public abstract void setCS(CallableStatement cs, K object);
+    public abstract String getDeleteQuery();
 
-    public abstract List<K> parseRS(ResultSet resultSet);
-
-    public abstract String deleteQuery();
-
-    public abstract String updateQuery();
+    public abstract String getUpdateQuery();
 
     public abstract String getSelectByQuery();
 
-    public abstract void setCSParametrs(CallableStatement cs);
+    protected abstract String getSelectList();
 
-    public abstract void getUserFromCS(int id, CallableStatement cs, K someObject);
+    public abstract void setCSParam(CallableStatement cs);
+
+    public abstract void setCS(CallableStatement cs, K object);
+
+    public abstract void setUpdateCS(CallableStatement cs, K obj);
+
+    public abstract List<K> parseRS(ResultSet resultSet);
+
+    public abstract K getUserFromCS(int id, CallableStatement cs);
 
 
     @Override
@@ -61,13 +65,12 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
             Connection con = DataBase.getConnect();
             String queryId = getSelectByQuery();
             CallableStatement cs = con.prepareCall(queryId);
+
             cs.setInt(1, id);
-
-            setCSParametrs(cs);
-
+            setCSParam(cs);
             cs.execute();
 
-            getUserFromCS(id, cs, someObject);
+            someObject = getUserFromCS(id, cs);
 
             cs.close();
             con.close();
@@ -82,12 +85,11 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
         return someObject;
     }
 
-
     @Override
     public void delete(int id) {
         try {
             Connection con = DataBase.getConnect();
-            String deleteRequest = deleteQuery();
+            String deleteRequest = getDeleteQuery();
             CallableStatement cs = con.prepareCall(deleteRequest);
             cs.setInt(1, id);
             cs.execute();
@@ -103,9 +105,9 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
     public void update(K obj) {
         try {
             Connection con = DataBase.getConnect();
-            String updateQuery = updateQuery();
+            String updateQuery = getUpdateQuery();
             CallableStatement cs = con.prepareCall(updateQuery);
-            setCS(cs, obj);
+            setUpdateCS(cs, obj);
             cs.execute();
             cs.close();
             con.close();
@@ -116,6 +118,18 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
 
     @Override
     public List<K> getAll() {
+        try {
+            Connection con = DataBase.getConnect();
+            String addQuery = getSelectQuery();
+            Statement st = con.createStatement();
+            ResultSet resultSet = st.executeQuery(addQuery);
+
+            List<K> list = parseRS(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
+
 }

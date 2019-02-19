@@ -11,9 +11,28 @@ import java.util.List;
 
 public class PlayerDao extends AbstractDao<Player> {
 
+    @Override
+    protected void setUpdateCS(CallableStatement cs, Player obj) {
+
+    }
 
     @Override
-    public String updateQuery() {
+    public String getSelectByQuery() {
+        return null;
+    }
+
+    @Override
+    public void setCSParam(CallableStatement cs) {
+
+    }
+
+    @Override
+    public Player getUserFromCS(int id, CallableStatement cs) {
+        return null;
+    }
+
+    @Override
+    public String getUpdateQuery() {
         return "{call updatePlayer(?,?)}";
     }
 
@@ -28,7 +47,7 @@ public class PlayerDao extends AbstractDao<Player> {
     }
 
     @Override
-    public String deleteQuery() {
+    public String getDeleteQuery() {
         return "{call deletePlayer(?)}";
     }
 
