@@ -18,6 +18,8 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
 
     public abstract String getSelectByQuery();
 
+    public abstract K getUserFromCS(int id, CallableStatement cs);
+
     public abstract void setCSParam(CallableStatement cs);
 
     public abstract void setCS(CallableStatement cs, K object);
@@ -25,8 +27,6 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
     public abstract void setUpdateCS(CallableStatement cs, K obj);
 
     public abstract List<K> parseRS(ResultSet resultSet);
-
-    public abstract K getUserFromCS(int id, CallableStatement cs);
 
 
     @Override

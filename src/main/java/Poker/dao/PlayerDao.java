@@ -36,12 +36,24 @@ public class PlayerDao extends AbstractDao<Player> {
         return "{call getPlayerById(?,?)}";
     }
 
+    @Override
+    public Player getUserFromCS(int id, CallableStatement cs) {
+        Player somePlayer = null;
+        try {
+            somePlayer = new Player();
+            somePlayer.setId(id);
+            somePlayer.setNickName(cs.getString(2));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return somePlayer;
+    }
 
     @Override
     public void setUpdateCS(CallableStatement cs, Player player) {
         try {
-            cs.setInt(1,player.getId());
-            cs.setString(2,player.getNickName());
+            cs.setInt(1, player.getId());
+            cs.setString(2, player.getNickName());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,16 +70,12 @@ public class PlayerDao extends AbstractDao<Player> {
     }
 
     @Override
-    public Player getUserFromCS(int id, CallableStatement cs) {
-       Player somePlayer = null;
+    public void setCS(CallableStatement cs, Player player) {
         try {
-            somePlayer = new Player();
-            somePlayer.setId(id);
-            somePlayer.setNickName(cs.getString(2));
+            cs.setString(1, player.getNickName());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return somePlayer;
     }
 
     @Override
@@ -85,15 +93,6 @@ public class PlayerDao extends AbstractDao<Player> {
             e.printStackTrace();
         }
         return players;
-    }
-
-    @Override
-    public void setCS(CallableStatement cs, Player player) {
-        try {
-            cs.setString(1, player.getNickName());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 
