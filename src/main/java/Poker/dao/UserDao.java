@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao  extends AbstractDao<User> {
-
     @Override
     public String getUpdateQuery() {
         return "{call updatedUser(?,?,?,?,?)}";

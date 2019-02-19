@@ -3,6 +3,8 @@ package Poker.dao;
 import Poker.jdbc.util.DataBase;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class AbstractDao<K> implements GenerickDao<K> {
@@ -15,8 +17,6 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
     public abstract String getUpdateQuery();
 
     public abstract String getSelectByQuery();
-
-    protected abstract String getSelectList();
 
     public abstract void setCSParam(CallableStatement cs);
 
@@ -118,18 +118,21 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
 
     @Override
     public List<K> getAll() {
+        List<K> list = new ArrayList<>();
         try {
             Connection con = DataBase.getConnect();
             String addQuery = getSelectQuery();
             Statement st = con.createStatement();
             ResultSet resultSet = st.executeQuery(addQuery);
-
-            List<K> list = parseRS(resultSet);
+            list = parseRS(resultSet);
+            st.close();
+            resultSet.close();
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return list;
     }
 
 }

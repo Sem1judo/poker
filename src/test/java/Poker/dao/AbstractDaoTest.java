@@ -9,36 +9,45 @@ import static org.junit.Assert.*;
 public class AbstractDaoTest {
     @Test
     public void create() {
-        User user = new User("LoginTest","passwordTest","emailTest");
-        user.setBalance(1111);
-        AbstractDao<User> userDao = new UserDao();
-       userDao.create(user);
+        Player player = new Player();
+        player.setNickName("Winner");
+        AbstractDao<Player> playerAbstractDao = new PlayerDao();
+        playerAbstractDao.create(player);
 
 
     }
 
     @Test
     public void read() {
-
-        AbstractDao<User> userDao = new UserDao();
-        User user =userDao.read(12);
-        assertNotNull(user);
-        System.out.println(user);
+        AbstractDao<Player> playerAbstractDao = new PlayerDao();
+        Player player = playerAbstractDao.read(1);
+        System.out.println(player);
+        assertNotNull(player);
     }
 
     @Test
     public void delete() {
+        AbstractDao<Player> pl = new PlayerDao();
+        pl.delete(5);
+        assertNotNull(pl);
 
-        User user = new User();
-        AbstractDao<User> userDao = new UserDao();
-        userDao.delete(9);
     }
 
     @Test
     public void update() {
-        AbstractDao<User> userDao = new UserDao();
-        User user =userDao.read(12);
-        user.setBalance(300);
-        userDao.update(user);
+
+        AbstractDao<Player> pl = new PlayerDao();
+        Player player = pl.read(8);
+        player.setNickName("BIbiKa");
+        pl.update(player);
+    }
+
+    @Test
+    public void getAll() {
+        AbstractDao<User> userAbstractDao = new UserDao();
+        System.out.println(userAbstractDao.getAll());
+
+        AbstractDao<Player> pl = new PlayerDao();
+        System.out.println(pl.getAll());
     }
 }
