@@ -32,27 +32,35 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
     @Override
     public K create(K obj) {
         K someObject = null;
-        try {
-            Connection con = DataBase.getConnect();
-            String addQuery = getCreateQuery();
-            CallableStatement cs = con.prepareCall(addQuery);
+        CallableStatement cs = null;
+        Statement st = null;
+        ResultSet resultSet = null;
+        String addQuery = getCreateQuery();
+        String queryId = getSelectQuery() + " where id = last_insert_id()";
+        try (Connection con = DataBase.getConnect()) {
+            cs = con.prepareCall(addQuery);
             setCS(cs, obj);
             cs.execute();
             cs.close();
 
-            String queryId = getSelectQuery() + " where id = last_insert_id()";
-            Statement st = con.createStatement();
-            ResultSet resultSet = st.executeQuery(queryId);
+            st = con.createStatement();
+            resultSet = st.executeQuery(queryId);
             List<K> list = parseRS(resultSet);
             if (list == null || list.size() != 1)
                 throw new Exception("Last player not found");
             someObject = list.get(0);
-            con.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                cs.close();
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return someObject;
 
@@ -61,19 +69,16 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
     @Override
     public K read(int id) {
         K someObject = null;
-        try {
-            Connection con = DataBase.getConnect();
-            String queryId = getSelectByQuery();
-            CallableStatement cs = con.prepareCall(queryId);
+        String queryId = getSelectByQuery();
+        CallableStatement cs = null;
+        try (Connection con = DataBase.getConnect()) {
+            cs = con.prepareCall(queryId);
 
             cs.setInt(1, id);
             setCSParam(cs);
             cs.execute();
 
             someObject = getUserFromCS(id, cs);
-
-            cs.close();
-            con.close();
         } catch (
                 SQLException e) {
             System.out.println(e.getMessage());
@@ -81,55 +86,76 @@ public abstract class AbstractDao<K> implements GenerickDao<K> {
         } catch (
                 Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                cs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return someObject;
     }
 
     @Override
     public void delete(int id) {
-        try {
-            Connection con = DataBase.getConnect();
-            String deleteRequest = getDeleteQuery();
-            CallableStatement cs = con.prepareCall(deleteRequest);
+        String deleteRequest = getDeleteQuery();
+        CallableStatement cs = null;
+        try (Connection con = DataBase.getConnect()) {
+            cs = con.prepareCall(deleteRequest);
             cs.setInt(1, id);
             cs.execute();
             cs.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                cs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
     }
 
     @Override
     public void update(K obj) {
-        try {
-            Connection con = DataBase.getConnect();
-            String updateQuery = getUpdateQuery();
-            CallableStatement cs = con.prepareCall(updateQuery);
+        String updateQuery = getUpdateQuery();
+        CallableStatement cs = null;
+        try (Connection con = DataBase.getConnect()) {
+            cs = con.prepareCall(updateQuery);
             setUpdateCS(cs, obj);
             cs.execute();
-            cs.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                cs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public List<K> getAll() {
         List<K> list = new ArrayList<>();
-        try {
-            Connection con = DataBase.getConnect();
-            String addQuery = getSelectQuery();
-            Statement st = con.createStatement();
-            ResultSet resultSet = st.executeQuery(addQuery);
+        String addQuery = getSelectQuery();
+        Statement st = null;
+        ResultSet resultSet = null;
+
+        try (Connection con = DataBase.getConnect()) {
+            st = con.createStatement();
+            resultSet = st.executeQuery(addQuery);
             list = parseRS(resultSet);
-            st.close();
-            resultSet.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                st.close();
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         return list;

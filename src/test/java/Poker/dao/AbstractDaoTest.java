@@ -48,6 +48,12 @@ public class AbstractDaoTest {
         System.out.println(userAbstractDao.getAll());
 
         AbstractDao<Player> pl = new PlayerDao();
+
+//        for (int i = 0; i < list.size(); i++) {
+//            System.out.println(list.get(i));
+//        }
+
+
         System.out.println(pl.getAll());
     }
 }

@@ -89,6 +89,7 @@ public class PlayerDao extends AbstractDao<Player> {
                 player.setNickName(resultSet.getString("nickName"));
                 players.add(player);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
